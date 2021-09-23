@@ -1,0 +1,6 @@
+#%RAML 1.0 Library
+usage:
+traits:
+  transactionId: !include triaits/headers_transactionID.raml 
+  depatureLocationCode: !include /libraries/schedules/traits/QueryParams-departureLocationCode.raml
+  destinationLocationCode: !include /libraries/schedules/traits/QueryParams-destinationLocationCode.raml

@@ -1,0 +1,73 @@
+#%RAML 1.0
+title: retrieve-consolidate-route-FastGo-Sys-API
+description: This RAML fetch route and Schudule form FastGo trnaport provider
+uses:
+  common: libraries/common/CommonBusinessLibary.raml
+
+
+types:
+  getrouteresponse: !include /libraries/routes/dataTypes/get-routes-dataType.raml
+  commonerror: !include /libraries/common/dataTypes/common-Error-dataType.raml
+  schedulereponse: !include /libraries/schedules/datatypes/get-schedule-dataType.raml 
+
+/{transportType}:
+  /{transportCompany}:
+    /routes:
+      get:
+        is:
+          - common.transactionId
+        responses:
+          200:
+            body:
+              application/json:
+                type: getrouteresponse
+                example: !include /libraries/routes/examples/get-route-example.json
+          400:
+            body:
+              application/json:
+                type: commonerror
+                example: !include /libraries/common/exmaples/400response-expale.json
+          403:
+            body:
+              application/json:
+                type: commonerror
+                example: !include /libraries/common/exmaples/403-response-expale.json
+          500:
+            body:
+              application/json:
+                type: commonerror
+                example: !include /libraries/common/exmaples/500response-expale.json
+    /schedules:
+      get:
+        is:
+          - common.transactionId
+          - common.depatureLocationCode
+          - common.destinationLocationCode
+        responses:
+          200:
+            body:
+              application/json:
+                type: schedulereponse
+                example: !include /libraries/schedules/examples/get-schedule-response.json
+          400:
+            body:
+              application/json:
+                type: commonerror
+                example: !include /libraries/common/exmaples/400response-expale.json
+          403:
+            body:
+              application/json:
+                type: commonerror
+                example: !include /libraries/common/exmaples/403-response-expale.json
+          500:
+            body:
+              application/json:
+                type: commonerror
+                example: !include /libraries/common/exmaples/500response-expale.json
+
+                              
+                
+                  
+                  
+                    
+                   

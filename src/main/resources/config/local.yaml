@@ -1,0 +1,11 @@
+http:
+  listner:
+   host: "localhost"
+   port: "9085"
+  requester:
+   host: "localhost"
+   port: "9083"
+   routes: "/fastgo/routes"
+   schedules: "/fastgo/schedules"
+
+  

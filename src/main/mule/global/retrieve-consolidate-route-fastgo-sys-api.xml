@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <http:listener-config name="retrieve-consolidate-route-fastgo-sys-api-httpListenerConfig">
+        <http:listener-connection host="${http.listner.host}" port="${http.listner.port}" />
+    </http:listener-config>
+    <apikit:config name="retrieve-consolidate-route-fastgo-sys-api-config" api="retrieve-consolidate-route-fastgo-sys-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="retrieve-consolidate-route-fastgo-sys-api-main">
+        <http:listener config-ref="retrieve-consolidate-route-fastgo-sys-api-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="retrieve-consolidate-route-fastgo-sys-api-config" />
+        <error-handler ref="globalErrorHandlerError_Handler">
+            
+        </error-handler>
+    </flow>
+    <flow name="retrieve-consolidate-route-fastgo-sys-api-console">
+        <http:listener config-ref="retrieve-consolidate-route-fastgo-sys-api-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="retrieve-consolidate-route-fastgo-sys-api-config" />
+		<error-handler ref="globalErrorHandlerError_Handler" />
+    
+</flow>
+    <sub-flow name="TransactionId" doc:id="5b7f4dca-f0dd-443e-aa6d-fe8dd2fa5a58" >
+		<ee:transform doc:name="Transform Message" doc:id="358a1fbf-bdf8-4f65-b1bb-786014b31761" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="transactionId" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.headers.transactionId]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<flow name="get:\(transportType)\(transportCompany)\routes:retrieve-consolidate-route-fastgo-sys-api-config">
+		<flow-ref doc:name="Flow Reference" doc:id="26271365-a709-4e25-a901-629c3f0c9a23" name="TransactionId"/>
+		<logger level="INFO" doc:name="Logger" doc:id="dba97373-b07f-4d73-af58-7d3dd394cd84" message="request recieved for get route fastgo for #[vars.transactionid]"/>
+		<flow-ref doc:name="routes" doc:id="cdfb0301-df87-426a-bd4e-0b9809fb1ba2" name="fastgo-getroutes-implementationSub_Flow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="dceff2ba-1dfe-4e39-aeff-3ee9a38a903a" message="response recieved for get route fastgo for #[vars.transactionid]"/>
+
+    </flow>
+    <flow name="get:\(transportType)\(transportCompany)\schedules:retrieve-consolidate-route-fastgo-sys-api-config">
+		<flow-ref doc:name="Flow Reference" doc:id="820dc1b4-471e-4593-8760-ad93c010362c" name="TransactionId"/>
+		<logger level="INFO" doc:name="Logger" doc:id="a3dc42e1-0b08-42b2-ae6c-cddbc50efc97" message="request recieved for get schedule fastgo for #[vars.transactionid]"/>
+		<flow-ref doc:name="schedules" doc:id="4d4f61ae-fe08-4bf1-baea-710890350af5" name="fastgo-getschedules-implementationSub_Flow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="b81cfcda-bde5-43a3-992b-74b4abef716a" message="response recieved for get route fastgo for #[vars.transactionid]"/>
+
+    </flow>
+</mule>
